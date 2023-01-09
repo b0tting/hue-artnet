@@ -267,6 +267,7 @@ connected = False
 for _ in range(10):
     try:
         sleep(0.2)
+        print(f"* Connecting to HUE attempt {_} ")
         h.sock.do_handshake()
         connected = True
     except exceptions.TLSError as e:
