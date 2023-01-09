@@ -8,50 +8,10 @@ Please be careful when using this to create flashing lights, as this could trigg
 ## Prerequisites
 
 - Python 3 (tested with 3.7.2)
-- python-mbedtls (see below)
+- https://github.com/Mbed-TLS/mbedtls (not the older one from apt!)
+- python-mbedtls (from pip)
 - Hue bridge v2 with at least api version 1.22
 - Up to 10 Hue Entertainment-compatible lights in one group
-
-### Building python-mbedtls for Windows
-
-python-mbedtls is currently not available as prebuilt package for Windows in pip.
-This will probably change in the future, as the maintainer is working on a CI pipeline to provide python wheels
-in upcoming releases.
-Also, a small patch in mbedtls is required, as the check they use is not valid on Windows (the value for 
-FD_SETSIZE cannot be easily determinted, as it depends on the value used to build the Python sockets module, end even
-that seems not to be correct). Disabling the check should _only_ be done on Windows!
-
-Building can be done with e.g. VS 2019 Community.
-
-First, get and build mbedtls:
-1. Clone mbedtls (I used v2.26.0 from https://github.com/ARMmbed/mbedtls)
-2. Patch the socket check for Windows with the patch below
-3. Build with CMake in a VSDevCmd shell: 
-  - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build_install`
-  - `cmake --build build --target install`
-
-```diff
-diff --git a/library/net_sockets.c b/library/net_sockets.c
-index ad1ac13fb..bc3b12b95 100644
---- a/library/net_sockets.c
-+++ b/library/net_sockets.c
-@@ -595,8 +595,8 @@ int mbedtls_net_recv_timeout( void *ctx, unsigned char *buf,
-      * that are strictly less than FD_SETSIZE. This is a limitation of the
-      * fd_set type. Error out early, because attempting to call FD_SET on a
-      * large file descriptor is a buffer overflow on typical platforms. */
--    if( fd >= FD_SETSIZE )
--        return( MBEDTLS_ERR_NET_POLL_FAILED );
-+    // if( fd >= FD_SETSIZE )
-+    //     return( MBEDTLS_ERR_NET_POLL_FAILED );
-```
-
-Then get and build python-mbedtls:
-1. Clone python-mbedtls (master from https://github.com/Synss/python-mbedtls)
-2. Set the env variables INCLUDE and LIBPATH to the just-built mbedtls:
-  - `set INCLUDE=..\mbedtls\build_install\include`
-  - `set LIBPATH=..\mbedtls\build_install\lib`
-3. Build python-mbedtls: `python setup.py install`
-
 
 ## Usage
 

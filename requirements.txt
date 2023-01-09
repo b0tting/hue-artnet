@@ -1,0 +1,1 @@
+python-mbedtls==1.7.0   # Raspbian bullseye only has support for mbedtls  2.16.12
